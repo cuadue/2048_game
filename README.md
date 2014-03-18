@@ -23,9 +23,21 @@ The game is over when no moves are possible.
 
 The controls are Vim-like:
 
-`h` slides the tiles to the left of the board
-`j` slides down
-`k` slides up
-`l` slides right
-`q` quits
+* `h` slides the tiles to the left of the board
+* `j` slides down
+* `k` slides up
+* `l` slides right
+* `q` quits
+
+The real game uses a luscious 8 colors in two brighnesses (normal and bright).
+Here's a monochrome screenshot:
+
+```
+Score:    122  Turns:   40
+                          
+   .    .    .   16       
+   .    .    4   32       
+   .    2   16    8       
+   4    8    4    2
+```
 
