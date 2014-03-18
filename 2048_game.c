@@ -1,17 +1,24 @@
+/* Clone of the 2048 sliding tile puzzle game. (C) Wes Waugh 2014
+ *
+ * This program only works on Unix-like systems with curses. Link against
+ * the curses library. You can pass the -lcurses flag to gcc at compile
+ * time.
+ *
+ * This program is free software, licensed under the GPLv3. Check the
+ * LICENSE file for details.
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <curses.h>
 #include <string.h>
 #include <time.h>
+#include <stdint.h>
 
 #define max(a, b) ((a) > (b) ? (a) : (b))
 
 #define NROWS 4
 #define NCOLS NROWS
-
-#ifndef uint8_t
-#define uint8_t unsigned char
-#endif
 
 struct game_t {
 	int turns, score, max_tile;
@@ -212,7 +219,7 @@ int main()
 		print_game(&game);
 
 		if (lose_game(game)) {
-			exit_msg = "You lose!";
+			exit_msg = "lost";
 			goto lose;
 		}
 
@@ -224,7 +231,7 @@ int main()
 		case 'k': move_up(&game); break;
 		case 'l': move_right(&game); break;
 		case 'q':
-			exit_msg = "Quitter!";
+			exit_msg = "quit";
 			goto end;
 		}
 
@@ -234,11 +241,12 @@ int main()
 
 lose:
 	move(7, 0);
-	printw("You lose. Press q to quit.");
+	printw("You lose! Press q to quit.");
 	while (getch() != 'q');
 end:
 	endwin();
-	printf("%s %d points in %d turns, with largest tile %d\n",
+	printf("You %s after scoring %d points in %d turns, "
+		"with largest tile %d\n",
 		exit_msg, game.score, game.turns, 1 << game.max_tile);
 	return 0;
 }
