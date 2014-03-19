@@ -13,7 +13,8 @@
 #include <curses.h>
 #include <string.h>
 #include <time.h>
-#include <stdint.h>
+
+typedef unsigned int tile_t;
 
 #define max(a, b) ((a) > (b) ? (a) : (b))
 
@@ -22,12 +23,12 @@
 
 struct game_t {
 	int turns, score, max_tile;
-	uint8_t board[NROWS][NCOLS];
+	tile_t board[NROWS][NCOLS];
 };
 
 int place_tile(struct game_t *game)
 {
-	uint8_t *lboard = (uint8_t *)game->board;
+	tile_t *lboard = (tile_t *)game->board;
 	int i, num_zeros = 0;
 	for (i = 0; i < NROWS * NCOLS; i++) {
 		num_zeros += lboard[i] ? 0 : 1;
@@ -38,7 +39,7 @@ int place_tile(struct game_t *game)
 	}
 
 	int loc = random() % num_zeros;
-	uint8_t new_val = random() % 10 ? 1 : 2;
+	tile_t new_val = random() % 10 ? 1 : 2;
 
 	for (i = 0; i < NROWS * NCOLS; i++) {
 		if (!lboard[i]) {
@@ -83,7 +84,7 @@ void print_game(struct game_t *game)
 	refresh();
 }
 
-int combine_left(struct game_t *game, uint8_t row[NCOLS])
+int combine_left(struct game_t *game, tile_t row[NCOLS])
 {
 	int c, did_combine = 0;
 	for (c = 1; c < NCOLS; c++) {
@@ -98,10 +99,10 @@ int combine_left(struct game_t *game, uint8_t row[NCOLS])
 	return did_combine;
 }
 
-int deflate_left(uint8_t row[NCOLS])
+int deflate_left(tile_t row[NCOLS])
 {
-	uint8_t buf[NCOLS] = {0};
-	uint8_t *out = buf;
+	tile_t buf[NCOLS] = {0};
+	tile_t *out = buf;
 	int did_compress = 0;
 
 	int in;
@@ -119,7 +120,7 @@ int deflate_left(uint8_t row[NCOLS])
 
 void rotate_clockwise(struct game_t *game)
 {
-	uint8_t buf[NROWS][NCOLS];
+	tile_t buf[NROWS][NCOLS];
 	memcpy(buf, game->board, sizeof(game->board));
 
 	int r, c;
@@ -134,7 +135,7 @@ void move_left(struct game_t *game)
 {
 	int r, ret = 0;
 	for (r = 0; r < NROWS; r++) {
-		uint8_t *row = &game->board[r][0];
+		tile_t *row = &game->board[r][0];
 		ret |= deflate_left(row);
 		ret |= combine_left(game, row);
 		ret |= deflate_left(row);
