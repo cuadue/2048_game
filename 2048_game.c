@@ -191,6 +191,7 @@ void init_curses()
 	start_color();
 	cbreak(); // curses don't wait for enter key
 	noecho(); // curses don't echo the pressed key
+	keypad(stdscr,TRUE);
 	clear(); // curses clear screen and send cursor to (0,0)
 	refresh();
 	curs_set(0);
@@ -227,10 +228,10 @@ int main()
 		last_turn = game.turns;
 
 		switch (getch()) {
-		case 'h': move_left(&game); break;
-		case 'j': move_down(&game); break;
-		case 'k': move_up(&game); break;
-		case 'l': move_right(&game); break;
+		case 'h': case KEY_LEFT: move_left(&game); break;
+		case 'j': case KEY_DOWN: move_down(&game); break;
+		case 'k': case KEY_UP: move_up(&game); break;
+		case 'l': case KEY_RIGHT: move_right(&game); break;
 		case 'q':
 			exit_msg = "quit";
 			goto end;
