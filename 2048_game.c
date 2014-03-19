@@ -50,7 +50,7 @@ int place_tile(struct game_t *game)
 			loc--;
 		}
 	}
-	return 0;
+	return -1;
 }
 
 void print_tile(int tile)
