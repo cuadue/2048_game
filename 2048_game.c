@@ -14,15 +14,15 @@
 #include <string.h>
 #include <time.h>
 
-typedef unsigned int tile_t;
-
 #define max(a, b) ((a) > (b) ? (a) : (b))
 
 #define NROWS 4
 #define NCOLS NROWS
 
+typedef unsigned int tile_t;
+
 struct game_t {
-	int turns, score, max_tile;
+	int turns, score;
 	tile_t board[NROWS][NCOLS];
 };
 
@@ -93,7 +93,6 @@ int combine_left(struct game_t *game, tile_t row[NCOLS])
 			row[c] = 0;
 			game->score += 1 << (row[c-1] - 1);
 			did_combine = 1;
-			game->max_tile = max(game->max_tile, row[c-1]);
 		}
 	}
 	return did_combine;
@@ -174,10 +173,6 @@ void move_down(struct game_t *game)
 int lose_game(struct game_t test_game)
 {
 	int start_turns = test_game.turns;
-	if (0 < place_tile(&test_game)) {
-		return 1;
-	}
-
 	move_left(&test_game);
 	move_up(&test_game);
 	move_down(&test_game);
@@ -202,6 +197,15 @@ void init_curses()
 	init_pair(4, COLOR_BLUE, 0);
 	init_pair(5, COLOR_MAGENTA, 0);
 	init_pair(6, COLOR_CYAN, 0);
+}
+
+int max_tile(tile_t *lboard)
+{
+	int i, ret = 0;
+	for (i = 0; i < NROWS * NCOLS; i++) {
+		ret = max(ret, lboard[i]);
+	}
+	return ret;
 }
 
 int main()
@@ -249,7 +253,8 @@ end:
 	endwin();
 	printf("You %s after scoring %d points in %d turns, "
 		"with largest tile %d\n",
-		exit_msg, game.score, game.turns, 1 << game.max_tile);
+		exit_msg, game.score, game.turns,
+		1 << max_tile((tile_t *)game.board));
 	return 0;
 }
 
