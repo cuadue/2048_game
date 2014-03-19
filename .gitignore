@@ -16,3 +16,10 @@
 *.exe
 *.out
 *.app
+2048
+
+# Vim files
+*.swp
+*.swo
+*.un~
+
