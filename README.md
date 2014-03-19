@@ -21,7 +21,7 @@ The score is simply the summation of the value of all tile combinations.
 
 The game is over when no moves are possible.
 
-The controls are Vim-like:
+The controls are Vim-like or arrow keys:
 
 * `h` slides the tiles to the left of the board
 * `j` slides down
