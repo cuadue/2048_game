@@ -39,15 +39,11 @@ int place_tile(struct game_t *game)
 	}
 
 	int loc = random() % num_zeros;
-	tile_t new_val = random() % 10 ? 1 : 2;
 
 	for (i = 0; i < NROWS * NCOLS; i++) {
-		if (!lboard[i]) {
-			if (!loc) {
-				lboard[i] = new_val;
-				return 0;
-			}
-			loc--;
+		if (!lboard[i] && !(loc--)) {
+			lboard[i] = random() % 10 ? 1 : 2;
+			return 0;
 		}
 	}
 	return -1;
@@ -108,8 +104,7 @@ int deflate_left(tile_t row[NCOLS])
 	for (in = 0; in < NCOLS; in++) {
 		if (row[in] != 0) {
 			*(out++) = row[in];
-			if (buf[in] != row[in])
-				did_compress = 1;
+			did_compress |= buf[in] != row[in];
 		}
 	}
 
