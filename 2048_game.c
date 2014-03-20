@@ -182,6 +182,7 @@ int lose_game(struct game_t test_game)
 
 void init_curses()
 {
+	int bg = 0;
 	initscr(); // curses init
 	start_color();
 	cbreak(); // curses don't wait for enter key
@@ -191,12 +192,13 @@ void init_curses()
 	refresh();
 	curs_set(0);
 
-	init_pair(1, COLOR_RED, 0);
-	init_pair(2, COLOR_GREEN, 0);
-	init_pair(3, COLOR_YELLOW, 0);
-	init_pair(4, COLOR_BLUE, 0);
-	init_pair(5, COLOR_MAGENTA, 0);
-	init_pair(6, COLOR_CYAN, 0);
+	bg = use_default_colors() == OK ? -1 : 0;
+	init_pair(1, COLOR_RED, bg);
+	init_pair(2, COLOR_GREEN, bg);
+	init_pair(3, COLOR_YELLOW, bg);
+	init_pair(4, COLOR_BLUE, bg);
+	init_pair(5, COLOR_MAGENTA, bg);
+	init_pair(6, COLOR_CYAN, bg);
 }
 
 int max_tile(tile_t *lboard)
