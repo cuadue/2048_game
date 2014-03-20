@@ -3,8 +3,10 @@ CFLAGS=-Wall -lcurses
 
 OBJ=2048_game.c
 
-all:
-	$(CC) $(OBJ) $(CFLAGS) -o 2048
+all: 2048
+
+2048: $(OBJ)
+	$(CC) $(CFLAGS) -o $@ $<
 
 clean:
 	rm -f 2048
