@@ -1,6 +1,8 @@
 c2048
 =====
 
+![2048 Screenshot](screenshot.gif)
+
 Sliding tile puzzle game in the terminal. The goal is to build the elusive
 `2048` tile by combining two `1024` tiles, which is in turn produced by
 combining two `512` tiles, which are built up from randomly dropped `2` and
