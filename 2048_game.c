@@ -210,7 +210,7 @@ int main()
 	init_curses();
 
 	const char *exit_msg = "";
-	srand(time(NULL));
+	srandom(time(NULL));
 
 	struct game_t game = {0};
 	int last_turn = game.turns;
