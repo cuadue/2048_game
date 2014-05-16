@@ -247,7 +247,7 @@ void load_highscore(struct game_t *g)
   if(access(g->highscorefile, F_OK | R_OK) != 0 ||
       (f = fopen(g->highscorefile, "r")) == NULL)
   {
-    printf("Failed to read the highscore file %s.\n", g->highscorefile);
+    printf("Failed to load the highscore.\n");
     return;
   }
   if(fscanf(f, "%d", &hs) != 1 || hs<0)
@@ -259,6 +259,24 @@ void load_highscore(struct game_t *g)
     return;
   }
   g->highscore = hs;
+  fclose(f);
+  return;
+}
+
+void save_highscore(struct game_t *g)
+{
+  FILE *f = NULL;
+  if(access(g->highscorefile, F_OK | W_OK) != 0 ||
+      (f = fopen(g->highscorefile, "w")) == NULL)
+  {
+    printf("Failed to open the highscore file for writing.\n");
+    return;
+  }
+  if(fprintf(f, "%d", g->highscore) < 1)
+  {
+    printf("Failed to write to the highscore file %s. It might be corrupted. "
+        "Please remove the file before running the game again.\n", g->highscorefile);
+  }
   fclose(f);
   return;
 }
@@ -309,10 +327,15 @@ lose:
   while (getch() != 'q');
 end:
   endwin();
+  if(game.score > game.highscore)
+  {
+    game.highscore = game.score;
+    save_highscore(&game);
+  }
   printf("You %s after scoring %d points in %d turns, "
-    "with largest tile %d\n",
+    "with largest tile %d. The local highscore is %d points.\n",
     exit_msg, game.score, game.turns,
-    1 << max_tile((tile_t *)game.board));
+    1 << max_tile((tile_t *)game.board), game.highscore);
   return 0;
 }
 
