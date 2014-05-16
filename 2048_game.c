@@ -13,6 +13,9 @@
 #include <curses.h>
 #include <string.h>
 #include <time.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <pwd.h>
 
 #define max(a, b) ((a) > (b) ? (a) : (b))
 
@@ -22,9 +25,12 @@
 typedef unsigned int tile_t;
 
 struct game_t {
-	int turns, score;
+	int turns, score, highscore;
+  char *highscorefile;
 	tile_t board[NROWS][NCOLS];
 };
+
+const char HIGHSCORE_FILE[] = ".2048score";
 
 int place_tile(struct game_t *game)
 {
@@ -205,6 +211,58 @@ int max_tile(tile_t *lboard)
 	return ret;
 }
 
+void get_highscore_filepath(struct game_t *g)
+{
+  uid_t uid;
+  struct passwd *pw;
+
+  uid = getuid();
+  if((pw = getpwuid(uid)) == NULL)
+  {
+    g->highscorefile = malloc(sizeof(HIGHSCORE_FILE));
+    memcpy(g->highscorefile, HIGHSCORE_FILE, sizeof(HIGHSCORE_FILE));
+    return;
+  }
+
+  g->highscorefile = calloc(sizeof(HIGHSCORE_FILE)+strlen(pw->pw_dir)+2, 1);
+  sprintf(g->highscorefile, "%s/%s", pw->pw_dir, HIGHSCORE_FILE);
+}
+
+void load_highscore(struct game_t *g)
+{
+  FILE *f = NULL;
+  int hs = 0;
+  if(access(g->highscorefile, F_OK) != 0)
+  {
+    if((f = fopen(g->highscorefile, "w")) == NULL)
+    {
+      printf("Failed to create the highscore file %s.\n", g->highscorefile);
+      return;
+    }
+    fprintf(f, "%d", 0);
+    fclose(f);
+    g->highscore = 0;
+    return;
+  }
+  if(access(g->highscorefile, F_OK | R_OK) != 0 ||
+      (f = fopen(g->highscorefile, "r")) == NULL)
+  {
+    printf("Failed to read the highscore file %s.\n", g->highscorefile);
+    return;
+  }
+  if(fscanf(f, "%d", &hs) != 1 || hs<0)
+  {
+    g->highscore = 0;
+    printf("The contents of the highscore file %s are corrupted. "
+        "Please remove the file and run the game again.\n", g->highscorefile);
+    fclose(f);
+    return;
+  }
+  g->highscore = hs;
+  fclose(f);
+  return;
+}
+
 int main()
 {
 	init_curses();
@@ -214,6 +272,9 @@ int main()
 
 	struct game_t game = {0};
 	int last_turn = game.turns;
+
+  get_highscore_filepath(&game);
+  load_highscore(&game);
 
 	place_tile(&game);
 	place_tile(&game);
