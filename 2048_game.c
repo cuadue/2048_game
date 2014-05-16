@@ -217,10 +217,22 @@ void get_highscore_filepath(struct game_t *g)
   if((pw = getpwuid(getuid())) == NULL)
   {
     g->highscorefile = calloc(sizeof(HIGHSCORE_FILE), 1);
+    if(g->highscorefile == NULL)
+    {
+      endwin();
+      perror("memory allocation error");
+      exit(1);
+    }
     memcpy(g->highscorefile, HIGHSCORE_FILE, sizeof(HIGHSCORE_FILE));
     return;
   }
   g->highscorefile = calloc(sizeof(HIGHSCORE_FILE)+strlen(pw->pw_dir)+2, 1);
+  if(g->highscorefile == NULL)
+  {
+    endwin();
+    perror("memory allocation error");
+    exit(1);
+  }
   sprintf(g->highscorefile, "%s/%s", pw->pw_dir, HIGHSCORE_FILE);
 }
 
@@ -245,7 +257,7 @@ void load_highscore(struct game_t *g)
     printf("Could not load the highscore.\n");
     return;
   }
-  if(fscanf(f, "%d", &hs) != 1 || hs<0)
+  if(fscanf(f, "%d", &hs) != 1 || hs < 0)
   {
     g->highscore = 0;
     printf("The contents of the highscore file %s are corrupted. "
