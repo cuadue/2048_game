@@ -213,17 +213,13 @@ int max_tile(tile_t *lboard)
 
 void get_highscore_filepath(struct game_t *g)
 {
-  uid_t uid;
   struct passwd *pw;
-
-  uid = getuid();
-  if((pw = getpwuid(uid)) == NULL)
+  if((pw = getpwuid(getuid())) == NULL)
   {
-    g->highscorefile = malloc(sizeof(HIGHSCORE_FILE));
+    g->highscorefile = calloc(sizeof(HIGHSCORE_FILE), 1);
     memcpy(g->highscorefile, HIGHSCORE_FILE, sizeof(HIGHSCORE_FILE));
     return;
   }
-
   g->highscorefile = calloc(sizeof(HIGHSCORE_FILE)+strlen(pw->pw_dir)+2, 1);
   sprintf(g->highscorefile, "%s/%s", pw->pw_dir, HIGHSCORE_FILE);
 }
@@ -240,25 +236,24 @@ void load_highscore(struct game_t *g)
       return;
     }
     fprintf(f, "%d", 0);
-    fclose(f);
     g->highscore = 0;
-    return;
+    goto closereturn;
   }
   if(access(g->highscorefile, F_OK | R_OK) != 0 ||
       (f = fopen(g->highscorefile, "r")) == NULL)
   {
-    printf("Failed to load the highscore.\n");
+    printf("Could not load the highscore.\n");
     return;
   }
   if(fscanf(f, "%d", &hs) != 1 || hs<0)
   {
     g->highscore = 0;
     printf("The contents of the highscore file %s are corrupted. "
-        "Please remove the file and run the game again.\n", g->highscorefile);
-    fclose(f);
-    return;
+        "Please remove the file before running the game again.\n", g->highscorefile);
+    goto closereturn;
   }
   g->highscore = hs;
+closereturn:
   fclose(f);
   return;
 }
@@ -269,14 +264,12 @@ void save_highscore(struct game_t *g)
   if(access(g->highscorefile, F_OK | W_OK) != 0 ||
       (f = fopen(g->highscorefile, "w")) == NULL)
   {
-    printf("Failed to open the highscore file for writing.\n");
+    printf("Could not save the highscore.\n");
     return;
   }
   if(fprintf(f, "%d", g->highscore) < 1)
-  {
     printf("Failed to write to the highscore file %s. It might be corrupted. "
         "Please remove the file before running the game again.\n", g->highscorefile);
-  }
   fclose(f);
   return;
 }
