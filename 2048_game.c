@@ -341,6 +341,7 @@ end:
 		"with largest tile %d. The local highscore is %d points.\n",
 		exit_msg, game.score, game.turns,
 		1 << max_tile((tile_t *)game.board), game.highscore);
+	free(game.highscorefile);
 	return 0;
 }
 
