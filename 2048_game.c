@@ -244,7 +244,9 @@ void load_highscore(struct game_t *g)
 	{
 		if((f = fopen(g->highscorefile, "w")) == NULL)
 		{
-			printf("Failed to create the highscore file %s.\n", g->highscorefile);
+			printw("Failed to create the highscore file %s.\n", g->highscorefile);
+			clear();
+			refresh();
 			return;
 		}
 		fprintf(f, "%d", 0);
@@ -254,14 +256,18 @@ void load_highscore(struct game_t *g)
 	if(access(g->highscorefile, F_OK | R_OK) != 0 ||
 			(f = fopen(g->highscorefile, "r")) == NULL)
 	{
-		printf("Could not load the highscore.\n");
+		printw("Could not load the highscore.\n");
+		clear();
+		refresh();
 		return;
 	}
 	if(fscanf(f, "%d", &hs) != 1 || hs < 0)
 	{
 		g->highscore = 0;
-		printf("The contents of the highscore file %s are corrupted. "
+		printw("The contents of the highscore file %s are corrupted. "
 				"Please remove the file before running the game again.\n", g->highscorefile);
+		clear();
+		refresh();
 		goto closereturn;
 	}
 	g->highscore = hs;
