@@ -26,10 +26,15 @@ struct game_t {
 	tile_t board[NROWS][NCOLS];
 };
 
+// place_tile() returns 0 if it did place a tile and -1 if there is no open
+// space.
 int place_tile(struct game_t *game)
 {
+	// lboard is the "linear board" -- no need to distinguish rows/cols
 	tile_t *lboard = (tile_t *)game->board;
 	int i, num_zeros = 0;
+
+	// Walk the board and count the number of empty tiles
 	for (i = 0; i < NROWS * NCOLS; i++) {
 		num_zeros += lboard[i] ? 0 : 1;
 	}
@@ -38,8 +43,10 @@ int place_tile(struct game_t *game)
 		return -1;
 	}
 
+	// Choose the insertion point
 	int loc = random() % num_zeros;
 
+	// Find the insertion point and place the new tile
 	for (i = 0; i < NROWS * NCOLS; i++) {
 		if (!lboard[i] && !(loc--)) {
 			lboard[i] = random() % 10 ? 1 : 2;
@@ -94,22 +101,23 @@ int combine_left(struct game_t *game, tile_t row[NCOLS])
 	return did_combine;
 }
 
+// deflate_left() returns nonzero if it did deflate, and 0 otherwise
 int deflate_left(tile_t row[NCOLS])
 {
 	tile_t buf[NCOLS] = {0};
 	tile_t *out = buf;
-	int did_compress = 0;
+	int did_deflate = 0;
 
 	int in;
 	for (in = 0; in < NCOLS; in++) {
 		if (row[in] != 0) {
-			*(out++) = row[in];
-			did_compress |= buf[in] != row[in];
+			*out++ = row[in];
+			did_deflate |= buf[in] != row[in];
 		}
 	}
 
 	memcpy(row, buf, sizeof(buf));
-	return did_compress;
+	return did_deflate;
 }
 
 void rotate_clockwise(struct game_t *game)
@@ -165,6 +173,7 @@ void move_down(struct game_t *game)
 	rotate_clockwise(game);
 }
 
+// Pass by value because this function mutates the game
 int lose_game(struct game_t test_game)
 {
 	int start_turns = test_game.turns;
