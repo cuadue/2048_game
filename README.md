@@ -1,4 +1,4 @@
-c2048
+2048 Game in the Terminal
 =====
 
 ![2048 Screenshot](screenshot.gif)
