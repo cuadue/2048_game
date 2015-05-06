@@ -23,12 +23,12 @@ The score is simply the summation of the value of all tile combinations.
 
 The game is over when no moves are possible.
 
-The controls are Vim-like or arrow keys:
+The controls:
 
-* `h` slides the tiles to the left of the board
-* `j` slides down
-* `k` slides up
-* `l` slides right
+* `h` `a` `←` slides the tiles to the left of the board
+* `j` `s` `↓` slides down
+* `k` `w` `↑` slides up
+* `l` `d` `→` slides right
 * `q` quits
 
 The real game uses a luscious 8 colors in two brighnesses (normal and bright).
