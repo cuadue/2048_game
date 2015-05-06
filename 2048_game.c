@@ -238,10 +238,10 @@ int main()
 		last_turn = game.turns;
 
 		switch (getch()) {
-		case 'h': case KEY_LEFT: move_left(&game); break;
-		case 'j': case KEY_DOWN: move_down(&game); break;
-		case 'k': case KEY_UP: move_up(&game); break;
-		case 'l': case KEY_RIGHT: move_right(&game); break;
+		case 'h': case KEY_LEFT: case 'a': move_left(&game); break;
+		case 'j': case KEY_DOWN: case 's': move_down(&game); break;
+		case 'k': case KEY_UP: case 'w': move_up(&game); break;
+		case 'l': case KEY_RIGHT: case 'd': move_right(&game); break;
 		case 'q':
 			exit_msg = "quit";
 			goto end;
