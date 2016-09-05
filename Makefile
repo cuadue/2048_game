@@ -1,5 +1,5 @@
 CC=gcc
-CFLAGS=-Wall
+CFLAGS=-Wall -Wextra -Werror
 LIBS=-lcurses
 
 OBJ=2048_game.c

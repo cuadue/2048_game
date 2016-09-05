@@ -13,13 +13,14 @@
 #include <curses.h>
 #include <string.h>
 #include <time.h>
+#include <assert.h>
 
 #define max(a, b) ((a) > (b) ? (a) : (b))
 
 #define NROWS 4
 #define NCOLS NROWS
 
-typedef unsigned int tile;
+typedef int tile;
 
 struct game {
 	int turns, score;
@@ -53,7 +54,7 @@ int place_tile(struct game *game)
 			return 0;
 		}
 	}
-	return -1;
+	assert(0);
 }
 
 void print_tile(int tile)
@@ -72,7 +73,7 @@ void print_tile(int tile)
 	}
 }
 
-void print_game(struct game *game)
+void print_game(const struct game *game)
 {
 	int r, c;
 	move(0, 0);
@@ -107,8 +108,8 @@ int deflate_left(tile row[NCOLS])
 	tile buf[NCOLS] = {0};
 	tile *out = buf;
 	int did_deflate = 0;
-
 	int in;
+
 	for (in = 0; in < NCOLS; in++) {
 		if (row[in] != 0) {
 			*out++ = row[in];
@@ -205,7 +206,7 @@ void init_curses()
 	init_pair(6, COLOR_CYAN, bg);
 }
 
-int max_tile(tile *lboard)
+int max_tile(const tile *lboard)
 {
 	int i, ret = 0;
 	for (i = 0; i < NROWS * NCOLS; i++) {
