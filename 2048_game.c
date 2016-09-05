@@ -19,19 +19,19 @@
 #define NROWS 4
 #define NCOLS NROWS
 
-typedef unsigned int tile_t;
+typedef unsigned int tile;
 
-struct game_t {
+struct game {
 	int turns, score;
-	tile_t board[NROWS][NCOLS];
+	tile board[NROWS][NCOLS];
 };
 
 // place_tile() returns 0 if it did place a tile and -1 if there is no open
 // space.
-int place_tile(struct game_t *game)
+int place_tile(struct game *game)
 {
 	// lboard is the "linear board" -- no need to distinguish rows/cols
-	tile_t *lboard = (tile_t *)game->board;
+	tile *lboard = (tile *)game->board;
 	int i, num_zeros = 0;
 
 	// Walk the board and count the number of empty tiles
@@ -72,7 +72,7 @@ void print_tile(int tile)
 	}
 }
 
-void print_game(struct game_t *game)
+void print_game(struct game *game)
 {
 	int r, c;
 	move(0, 0);
@@ -87,7 +87,7 @@ void print_game(struct game_t *game)
 	refresh();
 }
 
-int combine_left(struct game_t *game, tile_t row[NCOLS])
+int combine_left(struct game *game, tile row[NCOLS])
 {
 	int c, did_combine = 0;
 	for (c = 1; c < NCOLS; c++) {
@@ -102,10 +102,10 @@ int combine_left(struct game_t *game, tile_t row[NCOLS])
 }
 
 // deflate_left() returns nonzero if it did deflate, and 0 otherwise
-int deflate_left(tile_t row[NCOLS])
+int deflate_left(tile row[NCOLS])
 {
-	tile_t buf[NCOLS] = {0};
-	tile_t *out = buf;
+	tile buf[NCOLS] = {0};
+	tile *out = buf;
 	int did_deflate = 0;
 
 	int in;
@@ -120,9 +120,9 @@ int deflate_left(tile_t row[NCOLS])
 	return did_deflate;
 }
 
-void rotate_clockwise(struct game_t *game)
+void rotate_clockwise(struct game *game)
 {
-	tile_t buf[NROWS][NCOLS];
+	tile buf[NROWS][NCOLS];
 	memcpy(buf, game->board, sizeof(game->board));
 
 	int r, c;
@@ -133,11 +133,11 @@ void rotate_clockwise(struct game_t *game)
 	}
 }
 
-void move_left(struct game_t *game)
+void move_left(struct game *game)
 {
 	int r, ret = 0;
 	for (r = 0; r < NROWS; r++) {
-		tile_t *row = &game->board[r][0];
+		tile *row = &game->board[r][0];
 		ret |= deflate_left(row);
 		ret |= combine_left(game, row);
 		ret |= deflate_left(row);
@@ -146,7 +146,7 @@ void move_left(struct game_t *game)
 	game->turns += ret;
 }
 
-void move_right(struct game_t *game)
+void move_right(struct game *game)
 {
 	rotate_clockwise(game);
 	rotate_clockwise(game);
@@ -155,7 +155,7 @@ void move_right(struct game_t *game)
 	rotate_clockwise(game);
 }
 
-void move_up(struct game_t *game)
+void move_up(struct game *game)
 {
 	rotate_clockwise(game);
 	rotate_clockwise(game);
@@ -164,7 +164,7 @@ void move_up(struct game_t *game)
 	rotate_clockwise(game);
 }
 
-void move_down(struct game_t *game)
+void move_down(struct game *game)
 {
 	rotate_clockwise(game);
 	move_left(game);
@@ -174,7 +174,7 @@ void move_down(struct game_t *game)
 }
 
 // Pass by value because this function mutates the game
-int lose_game(struct game_t test_game)
+int lose_game(struct game test_game)
 {
 	int start_turns = test_game.turns;
 	move_left(&test_game);
@@ -205,7 +205,7 @@ void init_curses()
 	init_pair(6, COLOR_CYAN, bg);
 }
 
-int max_tile(tile_t *lboard)
+int max_tile(tile *lboard)
 {
 	int i, ret = 0;
 	for (i = 0; i < NROWS * NCOLS; i++) {
@@ -221,7 +221,7 @@ int main()
 	const char *exit_msg = "";
 	srandom(time(NULL));
 
-	struct game_t game = {0};
+	struct game game = {0};
 	int last_turn = game.turns;
 
 	place_tile(&game);
@@ -260,7 +260,7 @@ end:
 	printf("You %s after scoring %d points in %d turns, "
 		"with largest tile %d\n",
 		exit_msg, game.score, game.turns,
-		1 << max_tile((tile_t *)game.board));
+		1 << max_tile((tile *)game.board));
 	return 0;
 }
 
