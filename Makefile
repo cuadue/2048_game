@@ -1,20 +1,22 @@
-CC=gcc
 CFLAGS=-Wall -Wextra -Werror
-LIBS=-lcurses
+LDFLAGS=-lcurses
+OBJ=2048_game.o
+APP=2048
 
-OBJ=2048_game.c
+all: $(APP) test
 
-all: 2048 test
+%.o: %.c
+	$(CC) -c $(CFLAGS) -o $@ $<
 
-2048: $(OBJ)
-	$(CC) $(CFLAGS) -o $@ $< $(LIBS)
+$(APP): $(OBJ)
+	$(CC) -o $@ $< $(LDFLAGS)
 
-test: run-tests 2048
+test: run-tests $(APP)
 	bash -x ./$<
 
-demo: 2048
+demo: $(APP)
 	./$< -p "test-data/1/in"
 
 clean:
-	rm -f 2048
+	rm -f $(APP) $(OBJ)
 
