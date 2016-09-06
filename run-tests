@@ -1,0 +1,12 @@
+#!/bin/bash
+
+for RUN in test-data/*
+do
+    TESTFILE=$(mktemp)
+    ./2048 -s "$(cat "$RUN/seed")" -p "$RUN/in" -r "$TESTFILE"
+    if ! diff "$RUN/out" "$TESTFILE"
+    then
+        echo Test failed
+        exit 1
+    fi
+done
