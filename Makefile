@@ -9,8 +9,11 @@ all: 2048 test
 2048: $(OBJ)
 	$(CC) $(CFLAGS) -o $@ $< $(LIBS)
 
-test: run-tests
+test: run-tests 2048
 	bash -x ./$<
+
+demo: 2048
+	./$< -p "test-data/1/in"
 
 clean:
 	rm -f 2048
